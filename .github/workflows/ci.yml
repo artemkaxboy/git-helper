@@ -37,7 +37,8 @@ jobs:
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
           docker buildx build --push \
               --build-arg VERSION=${version} --build-arg REVISION=${revision} --build-arg REF_NAME=${ref_name} --build-arg CREATED="${now}" \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:${version} -t ${DOCKER_REGISTRY_USERNAME}/git-helper:${version} dockerbuild
+              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:${version} -t ${DOCKER_REGISTRY_USERNAME}/git-helper:${version} \
+              --file build/Dockerfile python
 
       - name: build and push tag and latest to docker.com and ghcr.io
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
@@ -57,4 +58,5 @@ jobs:
           docker buildx build --push \
               --build-arg VERSION=${version} --build-arg REVISION=${revision} --build-arg REF_NAME=${ref_name} --build-arg CREATED="${now}" \
               -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:${version} -t ${DOCKER_REGISTRY_USERNAME}/git-helper:${version} \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:latest -t ${DOCKER_REGISTRY_USERNAME}/git-helper:latest dockerbuild
+              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:latest -t ${DOCKER_REGISTRY_USERNAME}/git-helper:latest \
+              --file build/Dockerfile python
