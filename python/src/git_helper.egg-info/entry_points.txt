@@ -1,0 +1,3 @@
+[console_scripts]
+git-helper = git_helper.cli:main
+
