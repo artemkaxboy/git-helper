@@ -37,7 +37,7 @@ docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper [COMMAND] [PARAMS]
 Linux aliases can be used to **make the command shorter**. For only current terminal session:
 
 ```shell
-alias opener='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper'
+alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper'
 ```
 
 Or permanently (re-login required):
@@ -59,4 +59,4 @@ git-helper [COMMAND] [PARAMS]
 
 ## License
 
-Apache License 2.0, see [LICENSE](https://github.com/artemkaxboy/docker-opener/blob/main/LICENSE).
+Apache License 2.0, see [LICENSE](https://github.com/artemkaxboy/git-helper/blob/main/LICENSE).
