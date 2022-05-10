@@ -29,7 +29,7 @@ func main() {
 		c.SetCommon(cmd.CommonOpts{
 			GitDir: opts.GitDir,
 		})
-		//logDeprecatedParams(c.HandleDeprecatedFlags())
+
 		err := c.Execute(args)
 		if err != nil {
 			log.Printf("[ERROR] command failed: %+v", err)
