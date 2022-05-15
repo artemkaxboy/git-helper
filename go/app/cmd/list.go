@@ -1,6 +1,13 @@
 package cmd
 
-import "fmt"
+import (
+	"app/git"
+	"app/output"
+	"fmt"
+	log "github.com/go-pkgz/lgr"
+	"sort"
+	"time"
+)
 
 // ListCmd set of flags and command for list
 type ListCmd struct {
@@ -11,6 +18,32 @@ type ListCmd struct {
 
 // Execute runs list with ListCmd parameters, entry point for "list" command
 func (lc *ListCmd) Execute(_ []string) error {
-	fmt.Printf("%+v", lc)
+
+	log.Printf("[DEBUG] execute `authors` on %s", lc.GitDir)
+
+	repo, err := git.Open(lc.GitDir)
+	if err != nil {
+		return fmt.Errorf("failed to open repository: %w", err)
+	}
+
+	remotes, err := repo.GetRemotes()
+	if err != nil {
+		return fmt.Errorf("failed to read remotes: %w", err)
+	}
+
+	for _, remote := range remotes {
+
+		branches, err := remote.GetBranches()
+		if err != nil {
+			return err
+		}
+
+		sort.SliceIsSorted(branches, func(i, j int) bool {
+			return branches[i].LastCommitTime(time.Now()).After(branches[j].LastCommitTime(time.Now()))
+		})
+
+		output.PrintRemoteBranches(remote.Name(), branches)
+	}
+
 	return nil
 }

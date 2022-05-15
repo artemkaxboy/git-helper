@@ -13,7 +13,7 @@ import (
 
 func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
 
-	headers := git.RemoteBranchHeaders()
+	headers := append([]string{"#"}, git.RemoteBranchHeaders()...)
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(headers)
 	table.SetAutoFormatHeaders(false)
@@ -25,7 +25,10 @@ func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
 
 	branchRows := make([][]string, len(branches))
 	for i, branch := range branches {
-		branchRows[i] = branch.ToRow()
+		ordinal := i + 1
+		row := append([]string{strconv.Itoa(ordinal)}, branch.ToRow()...)
+
+		branchRows[i] = common.RoundStrings(row, []int{5, 40, 40, 40, 40})
 	}
 
 	table.AppendBulk(branchRows)
@@ -47,9 +50,10 @@ func PrintAuthors(remote string, authors []common.StringIntPair) {
 	authorRows := make([][]string, len(authors))
 	sum := 0
 	for i, author := range authors {
+		ordinal := i + 1
 
 		sum += author.Value
-		row := []string{strconv.Itoa(i + 1), author.Key, strconv.Itoa(author.Value)}
+		row := []string{strconv.Itoa(ordinal), author.Key, strconv.Itoa(author.Value)}
 		authorRows[i] = common.RoundStrings(row, []int{5, 60, 5})
 	}
 
