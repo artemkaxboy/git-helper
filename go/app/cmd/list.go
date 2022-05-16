@@ -11,8 +11,6 @@ import (
 
 // ListCmd set of flags and command for list
 type ListCmd struct {
-	ShortForm bool `long:"short" env:"SHORT" required:"false" description:"short form of the output"`
-
 	CommonOpts
 }
 
@@ -33,7 +31,7 @@ func (lc *ListCmd) Execute(_ []string) error {
 
 	for _, remote := range remotes {
 
-		branches, err := remote.GetBranches()
+		branches, err := remote.GetBranches(lc.Filter)
 		if err != nil {
 			return err
 		}

@@ -12,7 +12,7 @@ type RemoteBranch struct {
 	Repository *Repository
 }
 
-func (r *Remote) GetBranches() ([]*RemoteBranch, error) {
+func (r *Remote) GetBranches(filter string) ([]*RemoteBranch, error) {
 
 	references, err := r.Repository.Parent.References()
 	if err != nil {
@@ -22,12 +22,16 @@ func (r *Remote) GetBranches() ([]*RemoteBranch, error) {
 	var remoteBranches []*RemoteBranch
 	err = references.ForEach(func(ref *plumbing.Reference) error {
 		if r.IsParentOfBranch(ref) {
+
 			newBranch := RemoteBranch{
 				Parent:     ref,
 				Repository: r.Repository,
 				RemoteName: r.Name(),
 			}
-			remoteBranches = append(remoteBranches, &newBranch)
+
+			if newBranch.IsFilterPassed(filter) {
+				remoteBranches = append(remoteBranches, &newBranch)
+			}
 		}
 		return nil
 	})
@@ -77,6 +81,22 @@ func (rb *RemoteBranch) ToRow() []string {
 	}
 
 	return []string{rb.ShortName(), lastCommit.Time().Format("2006-01-02 15:04-07"), lastCommit.Author(), lastCommit.Title()}
+}
+
+func (rb *RemoteBranch) IsFilterPassed(filter string) bool {
+
+	if filter == "" {
+		return true
+	}
+
+	lastCommit, err := rb.LastCommit()
+	if err != nil {
+		return false
+	}
+
+	return strings.Contains(rb.ShortName(), filter) ||
+		strings.Contains(lastCommit.Title(), filter) ||
+		strings.Contains(lastCommit.Author(), filter)
 }
 
 func RemoteBranchHeaders() []string {

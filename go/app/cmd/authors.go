@@ -30,7 +30,7 @@ func (ac *AuthorsCmd) Execute(_ []string) error {
 
 	for _, remote := range remotes {
 
-		branches, err := remote.GetBranches()
+		branches, err := remote.GetBranches(ac.Filter)
 		if err != nil {
 			return err
 		}
