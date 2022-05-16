@@ -12,6 +12,8 @@ import (
 // ListCmd set of flags and command for list
 type ListCmd struct {
 	CommonOpts
+
+	Short bool `long:"short" env:"SHORT" required:"false" description:"short form of the output"`
 }
 
 // Execute runs list with ListCmd parameters, entry point for "list" command
@@ -40,7 +42,7 @@ func (lc *ListCmd) Execute(_ []string) error {
 			return branches[i].LastCommitTime(time.Now()).After(branches[j].LastCommitTime(time.Now()))
 		})
 
-		output.PrintRemoteBranches(remote.Name(), branches)
+		output.PrintRemoteBranches(remote.Name(), branches, lc.Short)
 	}
 
 	return nil

@@ -18,7 +18,25 @@ const (
 	longRow       = 60
 )
 
-func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
+func PrintRemoteBranches(remote string, branches []*git.RemoteBranch, short bool) {
+
+	if short {
+		printRemoteBranchesShort(remote, branches)
+	} else {
+		printRemoteBranchesFull(remote, branches)
+	}
+}
+
+func printRemoteBranchesShort(remote string, branches []*git.RemoteBranch) {
+
+	for _, branch := range branches {
+		fmt.Printf("%v ", branch.ShortName())
+	}
+
+	fmt.Printf("\n\nUse `git push %s --delete ...` to delete branches\n", remote)
+}
+
+func printRemoteBranchesFull(remote string, branches []*git.RemoteBranch) {
 
 	headers := append([]string{"#"}, git.RemoteBranchHeaders()...)
 	table := tablewriter.NewWriter(os.Stdout)
