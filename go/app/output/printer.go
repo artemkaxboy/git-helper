@@ -11,6 +11,13 @@ import (
 	"time"
 )
 
+const (
+	ordinalLength = 5
+	tinyRow       = 5
+	shortRow      = 40
+	longRow       = 60
+)
+
 func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
 
 	headers := append([]string{"#"}, git.RemoteBranchHeaders()...)
@@ -18,6 +25,7 @@ func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
 	table.SetHeader(headers)
 	table.SetAutoFormatHeaders(false)
 	table.SetAutoWrapText(false)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	sort.Slice(branches, func(i, j int) bool {
 		return branches[i].LastCommitTime(time.Now()).After(branches[j].LastCommitTime(time.Now()))
@@ -28,8 +36,13 @@ func PrintRemoteBranches(remote string, branches []*git.RemoteBranch) {
 		ordinal := i + 1
 		row := append([]string{strconv.Itoa(ordinal)}, branch.ToRow()...)
 
-		branchRows[i] = common.RoundStrings(row, []int{5, 40, 40, 40, 40})
+		branchRows[i] = common.RoundStrings(row, []int{ordinalLength, shortRow, shortRow, shortRow, shortRow})
 	}
+
+	aligns := make([]int, len(headers))
+	common.FillArrayWithValue(aligns, tablewriter.ALIGN_LEFT)
+	aligns[0] = tablewriter.ALIGN_RIGHT
+	table.SetColumnAlignment(aligns[:])
 
 	table.AppendBulk(branchRows)
 
@@ -54,7 +67,7 @@ func PrintAuthors(remote string, authors []common.StringIntPair) {
 
 		sum += author.Value
 		row := []string{strconv.Itoa(ordinal), author.Key, strconv.Itoa(author.Value)}
-		authorRows[i] = common.RoundStrings(row, []int{5, 60, 5})
+		authorRows[i] = common.RoundStrings(row, []int{ordinalLength, longRow, tinyRow})
 	}
 
 	table.SetHeader(headers)
