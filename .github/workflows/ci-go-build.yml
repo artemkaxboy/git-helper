@@ -26,8 +26,8 @@ jobs:
       - name: available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
 
-      - name: build and deploy master image to ghcr.io and dockerhub
-        if: ${{ github.ref == 'refs/heads/master' }}
+      - name: build and deploy main image to ghcr.io and dockerhub
+        if: ${{ github.ref == 'refs/heads/main' }}
         env:
           DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
