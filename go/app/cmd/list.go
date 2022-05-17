@@ -13,7 +13,7 @@ import (
 type ListCmd struct {
 	CommonOpts
 
-	Short bool `long:"short" env:"SHORT" required:"false" description:"short form of the output"`
+	Short bool `short:"s" long:"short" env:"SHORT" required:"false" description:"Short form of the output"`
 }
 
 // Execute runs list with ListCmd parameters, entry point for "list" command

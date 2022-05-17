@@ -12,7 +12,7 @@ type Opts struct {
 	AuthorsCmd cmd.AuthorsCmd `command:"authors"`
 	ListCmd    cmd.ListCmd    `command:"list"`
 
-	GitDir string `long:"git-dir" env:"GIT_DIR" required:"false" description:"the directory where the git repositories are stored"`
+	GitDir string `long:"git-dir" env:"GIT_DIR" required:"false" description:"The directory where the git repositories are stored"`
 
 	Dbg bool `long:"dbg" env:"DEBUG" description:"debug mode"`
 }
