@@ -38,15 +38,17 @@ jobs:
         run: |
           version="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
           now=$(date --rfc-3339=seconds --utc)
+          IMAGE_NAME="$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)"
           echo "REVISION=${GITHUB_SHA}, VERSION=${version}, REF_NAME=${GITHUB_REF}, CREATED=${now}"
+          
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
-          export
+          
           docker buildx build --push \
-              --build-arg CI=github --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
-              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED=${now} --platform linux/amd64 \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-${version} \
-              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-${version} \
+              --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
+              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED="${now}" --platform linux/amd64 \
+              --tag ghcr.io/${GH_REGISTRY_USERNAME}/${IMAGE_NAME}:go-${version} \
+              --tag ${DOCKER_REGISTRY_USERNAME}/${IMAGE_NAME}:go-${version} \
               --file go/docker/Dockerfile go
 
       - name: deploy tagged (latest) to ghcr.io and dockerhub
@@ -61,13 +63,15 @@ jobs:
         run: |
           version=${GITHUB_REF#refs/tags/v}
           now=$(date --rfc-3339=seconds --utc)
+          IMAGE_NAME="$(echo ${GITHUB_REPOSITORY} | cut -d'/' -f2)"
           echo "REVISION=${GITHUB_SHA}, VERSION=${version}, REF_NAME=${GITHUB_REF}, CREATED=${now}"
+
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
-          export
+
           docker buildx build --push \
-              --build-arg CI=github --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
-              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED=${now} --platform linux/amd64 \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-latest \
-              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-latest \
+              --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
+              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED="${now}" --platform linux/amd64 \
+              -t ghcr.io/${GH_REGISTRY_USERNAME}/${IMAGE_NAME}:go-latest \
+              -t ${DOCKER_REGISTRY_USERNAME}/${IMAGE_NAME}:go-latest \
               --file go/docker/Dockerfile go
