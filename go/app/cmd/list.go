@@ -23,7 +23,7 @@ func (lc *ListCmd) Execute(_ []string) error {
 
 	repo, err := git.Open(lc.GitDir)
 	if err != nil {
-		return fmt.Errorf("failed to open repository: %w", err)
+		return fmt.Errorf("failed to open repository: %w, make sure that git repository is accessible", err)
 	}
 
 	remotes, err := repo.GetRemotes()
