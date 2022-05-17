@@ -9,8 +9,8 @@ import (
 
 // Opts with all cli commands and flags
 type Opts struct {
-	AuthorsCmd cmd.AuthorsCmd `command:"authors"`
-	ListCmd    cmd.ListCmd    `command:"list"`
+	AuthorsCmd cmd.AuthorsCmd `command:"authors" description:"Show authors of branches in repository"`
+	ListCmd    cmd.ListCmd    `command:"list" description:"List branches in repository"`
 
 	GitDir string `long:"git-dir" env:"GIT_DIR" required:"false" description:"The directory where the git repositories are stored"`
 

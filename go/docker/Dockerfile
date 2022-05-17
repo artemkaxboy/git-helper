@@ -9,7 +9,7 @@ ENV CGO_ENABLED=0
 RUN echo go version: `go version`
 
 RUN \
-    go build -o app /build/app
+    go build -o git-helper /build/app
 
 FROM scratch
 
@@ -32,9 +32,9 @@ LABEL org.opencontainers.image.ref.name=${REF_NAME}
 LABEL org.opencontainers.image.title="Git Helper"
 LABEL org.opencontainers.image.description="Handy tool to find unused branches in your git repository"
 
-COPY --from=build-backend /build/app/app /app
+COPY --from=build-backend /build/app/git-helper /git-helper
 
 VOLUME /data
 WORKDIR /data
 
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/git-helper"]
