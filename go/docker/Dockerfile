@@ -1,6 +1,9 @@
 FROM golang:1.18-alpine as build-backend
 
-# TODO CI ARGS
+ARG VERSION=SNAPSHOT
+ARG REVISION=LOCAL
+ARG REF_NAME
+ARG CREATED
 
 ADD app /build/app
 WORKDIR /build/app

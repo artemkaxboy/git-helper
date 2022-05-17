@@ -27,7 +27,7 @@ jobs:
         run: echo ${{ steps.buildx.outputs.platforms }}
 
       - name: build and deploy main image to ghcr.io and dockerhub
-        if: ${{ github.ref == 'refs/heads/main' }}
+#        if: ${{ github.ref == 'refs/heads/main' }}
         env:
           DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
@@ -36,19 +36,21 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REF: ${{ github.ref }}
         run: |
-          ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
-          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, GIT_BRANCH=${ref}"
+          version="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
+          now=$(date --rfc-3339=seconds --utc)
+          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, VERSION=${version}"
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
+          export
           docker buildx build --push \
-              --build-arg CI=github --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg GIT_BRANCH=${ref} \
-              --build-arg GITHUB_REF=${GITHUB_REF} --platform linux/amd64 \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-${ref} \
-              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-${ref} \
+              --build-arg CI=github --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
+              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED=${now} --platform linux/amd64 \
+              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-${version} \
+              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-${version} \
               --file go/docker/Dockerfile go
 
       - name: deploy tagged (latest) to ghcr.io and dockerhub
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         env:
           DOCKER_REGISTRY_USERNAME: ${{ github.actor }}
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
@@ -57,14 +59,15 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REF: ${{ github.ref }}
         run: |
-          ref="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
-          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, GIT_BRANCH=${ref}"
+          version=${GITHUB_REF#refs/tags/v}
+          now=$(date --rfc-3339=seconds --utc)
+          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, VERSION=${version}"
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
+          export
           docker buildx build --push \
-              --build-arg CI=github --build-arg GITHUB_SHA=${GITHUB_SHA} --build-arg GIT_BRANCH=${ref} \
-              --build-arg GITHUB_REF=${GITHUB_REF} --platform linux/amd64 \
-              -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-${ref} \
+              --build-arg CI=github --build-arg REVISION=${GITHUB_SHA} --build-arg VERSION=${version} \
+              --build-arg REF_NAME=${GITHUB_REF} --build-arg CREATED=${now} --platform linux/amd64 \
               -t ghcr.io/${GH_REGISTRY_USERNAME}/git-helper:go-latest \
-              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-${ref} -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-latest \
+              -t ${DOCKER_REGISTRY_USERNAME}/git-helper:go-latest \
               --file go/docker/Dockerfile go
