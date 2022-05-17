@@ -34,4 +34,7 @@ LABEL org.opencontainers.image.description="Handy tool to find unused branches i
 
 COPY --from=build-backend /build/app/app /app
 
+VOLUME /data
+WORKDIR /data
+
 ENTRYPOINT ["/app"]
