@@ -31,19 +31,19 @@ Available commands:
 `git-helper` is just a regular docker image it may be used **without installation**: 
 
 ```shell
-docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-latest [OPTIONS] [COMMAND]
+docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main [OPTIONS] [COMMAND]
 ```
 
 Linux aliases can be used to **make the command shorter**. For only current terminal session:
 
 ```shell
-alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-latest'
+alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main'
 ```
 
 Or permanently (re-login required):
 
 ```shell
-echo "alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-latest'" >> ~/.bash_aliases
+echo "alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main'" >> ~/.bash_aliases
 ```
 
 ## Usage
@@ -166,7 +166,7 @@ After adding alias you can use short form:
 
 ```shell
 # long
-docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-latest [OPTIONS] [COMMAND]
+docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main [OPTIONS] [COMMAND]
 # short
 git-helper [OPTIONS] [COMMAND]
 ```
