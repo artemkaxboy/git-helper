@@ -38,7 +38,7 @@ jobs:
         run: |
           version="$(echo ${GITHUB_REF} | cut -d'/' -f3)"
           now=$(date --rfc-3339=seconds --utc)
-          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, VERSION=${version}"
+          echo "REVISION=${GITHUB_SHA}, VERSION=${version}, REF_NAME=${GITHUB_REF}, CREATED=${now}"
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
           export
@@ -61,7 +61,7 @@ jobs:
         run: |
           version=${GITHUB_REF#refs/tags/v}
           now=$(date --rfc-3339=seconds --utc)
-          echo "GITHUB_REF=${GITHUB_REF}, GITHUB_SHA=${GITHUB_SHA}, VERSION=${version}"
+          echo "REVISION=${GITHUB_SHA}, VERSION=${version}, REF_NAME=${GITHUB_REF}, CREATED=${now}"
           echo ${GH_REGISTRY_TOKEN} | docker login ghcr.io -u ${GH_REGISTRY_USERNAME} --password-stdin
           echo ${DOCKER_REGISTRY_TOKEN} | docker login -u ${DOCKER_REGISTRY_USERNAME} --password-stdin
           export
