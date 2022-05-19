@@ -12,7 +12,9 @@ type Opts struct {
 	AuthorsCmd cmd.AuthorsCmd `command:"authors" description:"Show authors of branches in repository"`
 	ListCmd    cmd.ListCmd    `command:"list" description:"List branches in repository"`
 
-	GitDir string `long:"git-dir" env:"GIT_DIR" required:"false" description:"The directory where the git repositories are stored"`
+	GitDir string `short:"d" long:"git-dir" env:"GIT_DIR" required:"false" description:"Path to git repository"`
+	Filter string `short:"f" long:"filter" env:"FILTER" required:"false" description:"Filter by branch name, last commit author or message"`
+	Age    string `short:"a" long:"age" env:"AGE" required:"false" description:"Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m, 1y3m"`
 
 	Dbg bool `long:"dbg" env:"DEBUG" description:"debug mode"`
 }
@@ -28,6 +30,8 @@ func main() {
 		c := command.(cmd.CommonOptionsCommander)
 		c.SetCommon(cmd.CommonOpts{
 			GitDir: opts.GitDir,
+			Filter: opts.Filter,
+			Age:    opts.Age,
 		})
 
 		err := c.Execute(args)
