@@ -6,29 +6,6 @@ Handy tool to find unused branches in your git repository
 
 It is a tool to simplify work with outdated git branches. It helps to find old branches that are not used anymore or branches made by certain people.
 
-## Usage
-
-**Use it in directories under version control**.
-
-```bash
-Usage:
-  git-helper [OPTIONS] <authors | list>
-
-Application Options:
-  -d, --git-dir= Path to git repository [$GIT_DIR]
-  -f, --filter=  Filter by branch name, last commit author or message [$FILTER]
-  -a, --age=     Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m,
-                 1y3m (default: 0) [$AGE]
-      --dbg      debug mode [$DEBUG]
-
-Help Options:
-  -h, --help     Show this help message
-
-Available commands:
-  authors  Show authors of branches in repository
-  list     List branches in repository
-```
-
 ## Installation
 
 `git-helper` is just a regular docker image it may be used **without installation**: 
@@ -50,6 +27,27 @@ echo "alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-help
 ```
 
 ## Usage
+
+**Use it in directories under version control** (which contains inner `.git` directory).
+
+```bash
+Usage:
+  git-helper [OPTIONS] <authors | list>
+
+Application Options:
+  -d, --git-dir= Path to git repository [$GIT_DIR]
+  -f, --filter=  Filter by branch name, last commit author or message [$FILTER]
+  -a, --age=     Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m,
+                 1y3m (default: 0) [$AGE]
+      --dbg      debug mode [$DEBUG]
+
+Help Options:
+  -h, --help     Show this help message
+
+Available commands:
+  authors  Show authors of branches in repository
+  list     List branches in repository
+```
 
 ### List branches
 
@@ -159,17 +157,6 @@ origin:
 +---+-----------------+---------------------+----------------------------------------+-------------------+
 | 1 | main            | 2022-05-07 21:52+07 | Maintainer <maintainer@git-helper.pro> | Init commit       |
 +---+-----------------+---------------------+----------------------------------------+-------------------+
-```
-
-## Linux system alias
-
-Short form of the command can be used in Linux system after adding an alias (see [Installation](#installation) section)
-
-```shell:
-# long
-docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main [OPTIONS] [COMMAND]
-# short
-git-helper [OPTIONS] [COMMAND]
 ```
 
 ## License
