@@ -32,3 +32,8 @@ func (c *Commit) Title() string {
 	title, _, _ := strings.Cut(c.Parent.Message, "\n")
 	return title
 }
+
+func (c *Commit) IsOlderThan(date time.Time) bool {
+
+	return c.Time().Before(date)
+}
