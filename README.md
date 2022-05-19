@@ -15,7 +15,10 @@ Usage:
   git-helper [OPTIONS] <authors | list>
 
 Application Options:
-      --git-dir= The directory where the git repositories are stored [$GIT_DIR]
+  -d, --git-dir= Path to git repository [$GIT_DIR]
+  -f, --filter=  Filter by branch name, last commit author or message [$FILTER]
+  -a, --age=     Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m,
+                 1y3m (default: 0) [$AGE]
       --dbg      debug mode [$DEBUG]
 
 Help Options:
@@ -50,26 +53,24 @@ echo "alias git-helper='docker run --rm -it -v $(pwd):/data artemkaxboy/git-help
 
 ### List branches
 
+`list` command shows all remote branches in all remotes in repository.
+
 ```shell
 Usage:
   git-helper [OPTIONS] list [list-OPTIONS]
 
 Application Options:
-      --git-dir=     The directory where the git repositories are stored
-                     [$GIT_DIR]
-      --dbg          debug mode [$DEBUG]
+  -d, --git-dir=   Path to git repository [$GIT_DIR]
+  -f, --filter=    Filter by branch name, last commit author or message [$FILTER]
+  -a, --age=       Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m, 1y3m [$AGE]
+      --dbg        debug mode [$DEBUG]
 
 Help Options:
-  -h, --help         Show this help message
+  -h, --help       Show this help message
 
 [list command options]
-      -d, --git-dir= Path to git repository [$GIT_DIR]
-      -f, --filter=  Filter by branch name, last commit author or message
-                     [$FILTER]
-      -s, --short    Short form of the output [$SHORT]
+      -s, --short  Short form of the output [$SHORT]
 ```
-
-Shows all remote branches in all remotes in repository.
 
 Basic usage:
 
@@ -86,21 +87,6 @@ origin:
 +---+-----------------+---------------------+----------------------------------------+-------------------+
 ```
 
-`--filter` accepts a string to filter by branch name, last commit author or message.
-
-Example:
-
-```shell
-$ git-helper list --filter author1
-origin:
-+---+-----------------+---------------------+----------------------------------+-------------------+
-| # |     Branch      |        Date         |              Author              |       Title       |
-+---+-----------------+---------------------+----------------------------------+-------------------+
-| 1 | author1-branch1 | 2022-05-07 22:40+07 | Author1 <author1@git-helper.pro> | Updates README.md |
-| 2 | author1-branch2 | 2022-05-07 22:40+07 | Author1 <author1@git-helper.pro> | Updates README.md |
-+---+-----------------+---------------------+----------------------------------+-------------------+```
-```
-
 `--short` option shows only branch names. Can be used with `--filter` option. Output of command shows list of branches and an example of how to delete them from remote.
 
 ```shell
@@ -112,25 +98,23 @@ Use `git push origin --delete ...` to delete branches
 
 ### List authors
 
+`authors` command shows all authors of branches (last commit in each branch) with sum of their branches.
+
 ```shell
 Usage:
-  git-helper [OPTIONS] authors [authors-OPTIONS]
+  git-helper [OPTIONS] authors
 
 Application Options:
-      --git-dir=     The directory where the git repositories are stored
-                     [$GIT_DIR]
-      --dbg          debug mode [$DEBUG]
+  -d, --git-dir=  Path to git repository [$GIT_DIR]
+  -f, --filter=   Filter by branch name, last commit author or message [$FILTER]
+  -a, --age=      Minimal age of last commit in branch to show, e.g. 1d, 1w, 1m, 1y3m [$AGE]
+      --dbg       debug mode [$DEBUG]
 
 Help Options:
-  -h, --help         Show this help message
-
-[authors command options]
-      -d, --git-dir= Path to git repository [$GIT_DIR]
-      -f, --filter=  Filter by branch name, last commit author or message
-                     [$FILTER]
+  -h, --help      Show this help message
 ```
 
-Shows all authors of branches (last commit in each branch) with sum of their branches.
+Basic usage:
 
 ```shell
 $ git-helper authors
@@ -146,25 +130,42 @@ Remote = origin:
 +---+----------------------------------------+----------+
 ```
 
+### Common options
+
 `--filter` accepts a string to filter by branch name, last commit author or message.
 
+Usage:
+
 ```shell
-$ git-helper authors --filter maintainer
-Remote = origin:
-+---+----------------------------------------+----------+
-| # |                 Author                 | Branches |
-+---+----------------------------------------+----------+
-| 1 | Maintainer <maintainer@git-helper.pro> |        1 |
-+---+----------------------------------------+----------+
-|                             Sum of 1 items |        1 |
-+---+----------------------------------------+----------+
+$ git-helper list --filter author1
+origin:
++---+-----------------+---------------------+----------------------------------+-------------------+
+| # |     Branch      |        Date         |              Author              |       Title       |
++---+-----------------+---------------------+----------------------------------+-------------------+
+| 1 | author1-branch1 | 2022-05-07 22:40+07 | Author1 <author1@git-helper.pro> | Updates README.md |
+| 2 | author1-branch2 | 2022-05-07 22:40+07 | Author1 <author1@git-helper.pro> | Updates README.md |
++---+-----------------+---------------------+----------------------------------+-------------------+```
 ```
 
-## Alias usage
+`--age` accepts a duration string to filter by last commit time. Duration string is a sequence of numbers and a unit of time, e.g. `1d`, `1w`, `1m`, `1y3m`.
 
-After adding alias you can use short form:
+Usage:
 
 ```shell
+$ git-helper list --age 1w1d
+origin:
++---+-----------------+---------------------+----------------------------------------+-------------------+
+| # |     Branch      |        Date         |                 Author                 |       Title       |
++---+-----------------+---------------------+----------------------------------------+-------------------+
+| 1 | main            | 2022-05-07 21:52+07 | Maintainer <maintainer@git-helper.pro> | Init commit       |
++---+-----------------+---------------------+----------------------------------------+-------------------+
+```
+
+## Linux system alias
+
+Short form of the command can be used in Linux system after adding an alias (see [Installation](#installation) section)
+
+```shell:
 # long
 docker run --rm -it -v $(pwd):/data artemkaxboy/git-helper:go-main [OPTIONS] [COMMAND]
 # short

@@ -18,6 +18,11 @@ func (ac *AuthorsCmd) Execute(_ []string) error {
 
 	log.Printf("[DEBUG] execute `authors` on %s", ac.GitDir)
 
+	age, err := getAge(ac.Age)
+	if err != nil {
+		return fmt.Errorf("failed to parse age: %w", err)
+	}
+
 	repo, err := git.Open(ac.GitDir)
 	if err != nil {
 		return fmt.Errorf("failed to open repository: %w, make sure that git repository is accessible", err)
@@ -30,7 +35,7 @@ func (ac *AuthorsCmd) Execute(_ []string) error {
 
 	for _, remote := range remotes {
 
-		branches, err := remote.GetBranches(ac.Filter)
+		branches, err := remote.GetBranches(ac.Filter, age)
 		if err != nil {
 			return err
 		}

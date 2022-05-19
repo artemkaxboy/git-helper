@@ -1,6 +1,7 @@
 package git
 
 import (
+	"app/common"
 	"github.com/go-git/go-git/v5/plumbing"
 	"strings"
 	"time"
@@ -12,7 +13,9 @@ type RemoteBranch struct {
 	Repository *Repository
 }
 
-func (r *Remote) GetBranches(filter string) ([]*RemoteBranch, error) {
+func (r *Remote) GetBranches(filter string, minAge *common.LongDuration) ([]*RemoteBranch, error) {
+
+	latestPossibleCommitTime := time.Now().AddDate(-minAge.Years, -minAge.Months, -minAge.Days)
 
 	references, err := r.Repository.Parent.References()
 	if err != nil {
@@ -29,7 +32,7 @@ func (r *Remote) GetBranches(filter string) ([]*RemoteBranch, error) {
 				RemoteName: r.Name(),
 			}
 
-			if newBranch.IsFilterPassed(filter) {
+			if newBranch.IsFilterPassed(filter) && newBranch.IsAgePassed(latestPossibleCommitTime) {
 				remoteBranches = append(remoteBranches, &newBranch)
 			}
 		}
@@ -97,6 +100,20 @@ func (rb *RemoteBranch) IsFilterPassed(filter string) bool {
 	return strings.Contains(rb.ShortName(), filter) ||
 		strings.Contains(lastCommit.Title(), filter) ||
 		strings.Contains(lastCommit.Author(), filter)
+}
+
+func (rb *RemoteBranch) IsAgePassed(latestPossibleCommitTime time.Time) bool {
+	return rb.IsOlder(latestPossibleCommitTime)
+}
+
+func (rb *RemoteBranch) IsOlder(latestPossibleCommitTime time.Time) bool {
+
+	lastCommit, err := rb.LastCommit()
+	if err != nil {
+		return false
+	}
+
+	return lastCommit.IsOlderThan(latestPossibleCommitTime)
 }
 
 func RemoteBranchHeaders() []string {
