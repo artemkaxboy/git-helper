@@ -26,13 +26,3 @@ func Open(repositoryPath string) (*Repository, error) {
 
 	return &Repository{gitRepository, absolutePath}, nil
 }
-
-// equals returns true if the given repository is the same as the current one.
-// It makes shallow comparisons for test purposes only.
-func (r *Repository) equals(other *Repository) bool {
-	if r == nil {
-		return other == nil
-	}
-
-	return r.rootPath == other.rootPath
-}

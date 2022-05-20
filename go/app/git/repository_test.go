@@ -1,6 +1,7 @@
 package git
 
 import (
+	"os"
 	"strings"
 	"testing"
 )
@@ -12,22 +13,26 @@ func TestOpen(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		want     *Repository
+		want     string
 		wantErr  bool
 		errorMsg string
 	}{
 		{
 			name: "success to open no remote repo",
 			args: args{repositoryPath: "testdata/noremoterepo"},
-			want: getNoRemoteRepoOpened(),
+			want: getWd() + "/testdata/noremoterepo",
 		}, {
 			name: "success to open one remote repo",
 			args: args{repositoryPath: "testdata/oneremoterepo"},
-			want: getOneRemoteRepoOpened(),
+			want: getWd() + "/testdata/oneremoterepo",
 		}, {
 			name: "success to open two remotes repo",
 			args: args{repositoryPath: "testdata/tworemotesrepo"},
-			want: getTwoRemotesRepoOpened(),
+			want: getWd() + "/testdata/tworemotesrepo",
+		}, {
+			name: "failed to open denied config repo",
+			args: args{repositoryPath: "testdata/deniedconfigrepo"},
+			want: getWd() + "/testdata/deniedconfigrepo",
 		}, {
 			name:     "fail to open no repo directory",
 			args:     args{repositoryPath: "testdata/norepo"},
@@ -46,11 +51,22 @@ func TestOpen(t *testing.T) {
 				t.Errorf("Open() error = %v, must contain %v", err.Error(), tt.errorMsg)
 				return
 			}
-			if !got.equals(tt.want) {
-				t.Errorf("Open() got = %v, want %v", got, tt.want)
+
+			gotString := ""
+			if got != nil {
+				gotString = got.rootPath
+			}
+
+			if gotString != tt.want {
+				t.Errorf("Open() = %v, want %v", got.rootPath, tt.want)
 			}
 		})
 	}
+}
+
+func getWd() string {
+	wd, _ := os.Getwd()
+	return wd
 }
 
 func getNoRemoteRepoOpened() *Repository {
@@ -65,5 +81,10 @@ func getOneRemoteRepoOpened() *Repository {
 
 func getTwoRemotesRepoOpened() *Repository {
 	repo, _ := Open("testdata/tworemotesrepo")
+	return repo
+}
+
+func getDeniedConfigRepoOpened() *Repository {
+	repo, _ := Open("testdata/deniedconfigrepo")
 	return repo
 }
